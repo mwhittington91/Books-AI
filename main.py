@@ -37,9 +37,10 @@ def get_books(search_term, filter_type: SearchFilter|None = None, filter_term: s
 
     return json.dumps(output, indent=4, sort_keys=True)
     
+webhook_url = os.getenv(key="ZAPIER_WEBHOOK_URL")
 def add_to_book_list(isbn13: str):
     """Send the ISBN to the user"""
-    # r= httpx.post(url="https://hooks.zapier.com/hooks/catch/14233815/3wohk5i/",data={"isbn": isbn13})
+    # r= httpx.post(url="webhook_url",data={"isbn": isbn13})
     # return r.json()
     return isbn13
 
