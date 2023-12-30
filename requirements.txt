@@ -1,4 +1,4 @@
 python-dotenv
 langchain
 openai
-requests
+httpx

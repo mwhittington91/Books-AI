@@ -1,22 +1,46 @@
+#https://developers.google.com/books/docs/v1/using#st_params
+
+from enum import StrEnum, auto
+import http
 import json
-import requests
+import httpx
 import os
+import logging
 from dotenv import load_dotenv
 
 load_dotenv()
 
-books_api_key: str | None = os.getenv('GOOGLE_BOOKS_API_KEY')
+books_api_key: str | None = os.getenv(key='GOOGLE_BOOKS_API_KEY')
 
-def get_books(search_term, search_type=None):
-    reqUrl = f"https://www.googleapis.com/books/v1/volumes?q={search_term}+{search_type}&key={books_api_key}"
+class SearchFilter(StrEnum):
+    intitle = auto()
+    inauthor = auto()
+    isbn = auto()
+    inpublisher = auto()
+    subject = auto()
+    lccn = auto()
+    oclc = auto()
 
-    headersList = {
-     "Accept": "*/*" 
-    }
+def get_books(search_term, filter_type: SearchFilter|None = None, filter_term: str|None = None):
+    """Get a list of books from Google Books API. Takes 
+        in a search term, search filter and filter term. Here is an example of searching
+        for a list of books with 'Mist' in the title and an author with the name 'Brandon':
+        get_books(search_term=Mist,filter_type=inauthor,filter_term=Brandon)
+        """
+    reqUrl = f"https://www.googleapis.com/books/v1/volumes?q={search_term}+{filter_type}:{filter_term}&key={books_api_key}"
 
-    response = requests.request("GET", reqUrl, headers=headersList)
+    response = httpx.get(reqUrl, headers={"Accept": "application/json"})
+    
+    logging.info(msg=response)
 
     output = response.json()['items']
 
     return json.dumps(output, indent=4, sort_keys=True)
+    
+def add_to_book_list(isbn13: str):
+    """Send the ISBN to the user"""
+    # r= httpx.post(url="https://hooks.zapier.com/hooks/catch/14233815/3wohk5i/",data={"isbn": isbn13})
+    # return r.json()
+    return isbn13
 
+# print(send_isbn(isbn13="9781250298348"))
