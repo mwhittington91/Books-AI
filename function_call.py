@@ -31,19 +31,19 @@ def run_conversation(question:str):
     if tool_calls:
         # Step 3: call the function
         # Note: the JSON response may not always be valid; be sure to handle errors
-        available_functions = [{
-            "get_books": get_books},{"add_to_book_list": add_to_book_list}] 
+        available_functions = [{"add_to_book_list": add_to_book_list},{
+            "get_books": get_books}] 
         # only one function in this example, but you can have multiple
         messages.append(response_message)  # extend conversation with assistant's reply
         # Step 4: send the info for each function call and function response to the model
         for tool_call in tool_calls:
             function_name: str = tool_call.function.name
-            function_to_call = available_functions[tool_calls.index(tool_call)][function_name]
+            function_to_call = [func for func in available_functions if function_name in func][0][function_name]
             function_args = json.loads(s=tool_call.function.arguments)
             logging.info(msg=function_args)
             function_response: str = function_to_call(**(dict(function_args))
             )
-            logging.info(msg=function_response)
+            logging.debug(msg=function_response)
             messages.append(
                 {
                     "tool_call_id": tool_call.id,
@@ -52,6 +52,7 @@ def run_conversation(question:str):
                     "content": function_response,
                 }
             )  # extend conversation with function response
+            logging.info(msg=messages[-2])
         second_response = client.chat.completions.create(
             model="gpt-3.5-turbo-1106",
             messages=messages,

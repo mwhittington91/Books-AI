@@ -40,20 +40,17 @@ function_descriptions = [{
         "function":
         {
             "name": "add_to_book_list",
-            "description": """Adds a book to the user's book list. 
-            Takes in a book's ISBN13 and adds it to the user's book list""",
+            "description": """Use this when a user asks to add a book to their book list.""",
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "isbn13": {
-                        "type": "string",
-                        "description": "The ISBN13 to send to the user",
+                    "book": {
+                        "type": "object",
+                        "description": "json object of the book to be added to the user's book list",
                     },
                 },
-                "required": ["isbn13"],
+                "required": ["book"],
             },
         }
     }
-    
-   
 ]
